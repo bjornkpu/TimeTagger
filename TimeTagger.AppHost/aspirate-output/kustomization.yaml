@@ -1,0 +1,11 @@
+namespace: timetagger
+
+resources:
+- api
+- namespace.yaml
+- dashboard.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+

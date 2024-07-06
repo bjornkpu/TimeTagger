@@ -1,0 +1,25 @@
+{
+  "projectPath": ".",
+  "inputPath": "aspirate-output",
+  "outputPath": "aspirate-output",
+  "namespace": "TimeTagger",
+  "containerRegistry": "docker.io",
+  "containerImageTags": [
+    "latest"
+  ],
+  "imagePullPolicy": "IfNotPresent",
+  "containerBuilder": "docker",
+  "containerRepositoryPrefix": "enocon",
+  "kubeContext": "microk8s",
+  "outputFormat": "kustomize",
+  "skipFinalKustomizeGeneration": false,
+  "privateRegistryEmail": "aspir8@aka.ms",
+  "includeDashboard": true,
+  "useCustomNamespace": true,
+  "secrets": {
+    "salt": "PQ3LeP7CHs7V6PR4",
+    "hash": "m7VKFfj\u002Bm3ooEFLWBwmFXZYOKexnuHebQGqZ8YkKwLU=",
+    "secrets": {}
+  },
+  "processAllComponents": true
+}

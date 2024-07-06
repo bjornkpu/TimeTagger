@@ -1,0 +1,11 @@
+{
+  "TemplatePath": null,
+  "ContainerSettings": {
+    "Registry": "docker.io",
+    "RepositoryPrefix": "enocon",
+    "Tags": [
+      "latest"
+    ],
+    "Builder": "docker"
+  }
+}
