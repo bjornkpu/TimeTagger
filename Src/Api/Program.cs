@@ -1,4 +1,5 @@
-using TimeTagger.Api;
+using FastEndpoints;
+using Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ builder.Services.AddSwaggerGen();
 
 builder.AddNpgsqlDbContext<DbCtx>("postgresdb");
 
+builder.Services.AddFastEndpoints();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -20,6 +23,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseFastEndpoints();
 
 app.MapGet("/", () => "Hello World! [TimeTagger]");
 

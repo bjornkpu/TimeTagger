@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace TimeTagger.Api;
+namespace Api;
 
 public class DbCtx(DbContextOptions<DbCtx> options) : DbContext(options);

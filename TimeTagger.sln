@@ -2,11 +2,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.0.0
 MinimumVisualStudioVersion = 17.8.0.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeTagger.AppHost", "TimeTagger.AppHost\TimeTagger.AppHost.csproj", "{7A7DE374-38B0-41F9-B4DA-B60CA46365DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeTagger.AppHost", "Src\TimeTagger.AppHost\TimeTagger.AppHost.csproj", "{7A7DE374-38B0-41F9-B4DA-B60CA46365DD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeTagger.ServiceDefaults", "TimeTagger.ServiceDefaults\TimeTagger.ServiceDefaults.csproj", "{F2F965BA-6B33-4873-B10C-B944F1D12D8F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeTagger.ServiceDefaults", "Src\TimeTagger.ServiceDefaults\TimeTagger.ServiceDefaults.csproj", "{F2F965BA-6B33-4873-B10C-B944F1D12D8F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeTagger.Api", "TimeTagger.Api\TimeTagger.Api.csproj", "{E1B374AF-1FE9-4B9D-8A9D-805258564741}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Src\Api\Api.csproj", "{E1B374AF-1FE9-4B9D-8A9D-805258564741}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

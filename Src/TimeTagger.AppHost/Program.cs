@@ -6,7 +6,7 @@ var postgresDb = builder.AddPostgres("postgres", password: dbPassword, port: 543
     .WithDataVolume()
     .AddDatabase("events");
 
-var api = builder.AddProject<Projects.TimeTagger_Api>("api")
+var api = builder.AddProject<Projects.Api>("api")
     .WithReference(postgresDb)
     .WithExternalHttpEndpoints();
 
