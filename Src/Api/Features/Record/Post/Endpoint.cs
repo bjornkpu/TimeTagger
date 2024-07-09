@@ -6,29 +6,37 @@ namespace Api.Features.Record.Post;
 
 [AllowAnonymous]
 [HttpPost("/record")]
-public class Endpoint : Endpoint<Request, Response>
+public class Endpoint : Endpoint<Request, Response, Mapper>
 {
     public DbCtx DbCtx { get; set; }
 
     public override async Task HandleAsync(Request req, CancellationToken ct)
     {
-        await SendAsync(new()
+        var res = await DbCtx.Records.AddAsync(new Database.Record()
         {
-            FullName = req.FirstName + " " + req.LastName,
-            IsOver18 = req.Age > 18
+            Id = new Guid(),
+            Timestamp = DateTime.Now,
+            Tag = req.Tag
         });
+
+        await SendAsync(Map.FromEntity(res.Entity));
     }
 
 }
 public class Request
 {
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public int Age { get; set; }
+    public string? Tag { get; set; }
 }
 
-public class Response
+public class Response : Database.Record;
+
+
+public class Mapper : Mapper<Request, Response, Database.Record>
 {
-    public string FullName { get; set; }
-    public bool IsOver18 { get; set; }
+    public override Response FromEntity(Database.Record e) => new()
+    {
+        Id = e.Id,
+        Timestamp = e.Timestamp,
+        Tag = e.Tag
+    };
 }
