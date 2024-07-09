@@ -6,7 +6,7 @@ using Xunit.Abstractions;
 
 namespace Api.Tests;
 
-public class AspireTests(TestFixture fixture, ITestOutputHelper testOutputHelper)
+public class AspireTests(TestFixture fixture, ITestOutputHelper _testOutputHelper)
     : IClassFixture<TestFixture>
 {
     private readonly HttpClient _httpClient = fixture.httpClient;
@@ -71,17 +71,36 @@ public class AspireTests(TestFixture fixture, ITestOutputHelper testOutputHelper
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
+    [Fact]
+    public async Task DeleteRecord_ReturnsNoContent()
+    {
+        // Arrange
+        var httpResponse = await _httpClient.PostAsJsonAsync("/record", new Request());
+        var record = await httpResponse.Content.ReadFromJsonAsync<Database.Record>();
+        Assert.NotNull(record);
+
+        // Act
+        var response = await _httpClient.DeleteAsync($"/record/{record.Id}");
+
+        // Assert
+        _testOutputHelper.WriteLine(response.ToString());
+        var responseBody = await response.Content.ReadAsStringAsync();
+        Assert.NotNull(responseBody);
+        Print(responseBody);
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
+
     private async void Print<T>(HttpResponseMessage response)
     {
         var responseBody = await response.Content.ReadFromJsonAsync<T>();
         var jsonSerializerOptions = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
         var json = System.Text.Json.JsonSerializer.Serialize(responseBody, jsonSerializerOptions);
-        testOutputHelper.WriteLine(json);
+        _testOutputHelper.WriteLine(json);
     }
     private async void Print<T>(T responseBody)
     {
         var jsonSerializerOptions = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
         var json = System.Text.Json.JsonSerializer.Serialize(responseBody, jsonSerializerOptions);
-        testOutputHelper.WriteLine(json);
+        _testOutputHelper.WriteLine(json);
     }
 }
