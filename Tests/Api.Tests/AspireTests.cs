@@ -6,26 +6,18 @@ using Xunit.Abstractions;
 
 namespace Api.Tests;
 
-public class AspireTests
+public class AspireTests(TestFixture fixture, ITestOutputHelper testOutputHelper)
+    : IClassFixture<TestFixture>
 {
-    private readonly ITestOutputHelper _testOutputHelper;
-
-    public AspireTests(ITestOutputHelper testOutputHelper)
-    {
-        _testOutputHelper = testOutputHelper;
-    }
+    private readonly HttpClient _httpClient = fixture.httpClient;
 
     [Fact]
     public async Task GetApiResourceRootReturnsOkStatusCode()
     {
         // Arrange
-        var appHost = await DistributedApplicationTestingBuilder.CreateAsync<Projects.AppHost>();
-        await using var app = await appHost.BuildAsync();
-        await app.StartAsync();
 
         // Act
-        var httpClient = app.CreateHttpClient("api");
-        var response = await httpClient.GetAsync("/");
+        var response = await _httpClient.GetAsync("/");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -35,17 +27,12 @@ public class AspireTests
     public async Task PostRecord_WithoutTag_ReturnsOk()
     {
         // Arrange
-        var appHost = await DistributedApplicationTestingBuilder.CreateAsync<Projects.AppHost>();
-        await using var app = await appHost.BuildAsync();
-        await app.StartAsync();
 
         // Act
-        var httpClient = app.CreateHttpClient("api");
-        var response = await httpClient.PostAsJsonAsync("/record", new Request());
-
-        Print<Response>(response);
+        var response = await _httpClient.PostAsJsonAsync("/record", new Request());
 
         // Assert
+        Print<Response>(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
@@ -53,26 +40,18 @@ public class AspireTests
     public async Task PostRecord_WithTag_ReturnsOk()
     {
         // Arrange
-        var appHost = await DistributedApplicationTestingBuilder.CreateAsync<Projects.AppHost>();
-        await using var app = await appHost.BuildAsync();
-        await app.StartAsync();
-
-        var tag = "Work";
+        const string tag = "Work";
 
         // Act
-        var httpClient = app.CreateHttpClient("api");
-        var response = await httpClient.PostAsJsonAsync("/record", new Request()
+        var response = await _httpClient.PostAsJsonAsync("/record", new Request()
         {
             Tag = tag
         });
 
-
+        // Assert
         var responseBody = await response.Content.ReadFromJsonAsync<Response>();
         Assert.NotNull(responseBody);
-
         Print(responseBody);
-
-        // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal(tag, responseBody.Tag);
     }
@@ -82,12 +61,12 @@ public class AspireTests
         var responseBody = await response.Content.ReadFromJsonAsync<T>();
         var jsonSerializerOptions = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
         var json = System.Text.Json.JsonSerializer.Serialize(responseBody, jsonSerializerOptions);
-        _testOutputHelper.WriteLine(json);
+        testOutputHelper.WriteLine(json);
     }
     private async void Print<T>(T responseBody)
     {
         var jsonSerializerOptions = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
         var json = System.Text.Json.JsonSerializer.Serialize(responseBody, jsonSerializerOptions);
-        _testOutputHelper.WriteLine(json);
+        testOutputHelper.WriteLine(json);
     }
 }
