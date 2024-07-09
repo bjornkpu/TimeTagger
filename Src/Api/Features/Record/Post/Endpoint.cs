@@ -1,12 +1,15 @@
-﻿using FastEndpoints;
+﻿using Api.Database;
+using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Api.Features.Record.Post;
 
 [AllowAnonymous]
-[HttpPost("/api/user/create")]
+[HttpPost("/record")]
 public class Endpoint : Endpoint<Request, Response>
 {
+    public DbCtx DbCtx { get; set; }
+
     public override async Task HandleAsync(Request req, CancellationToken ct)
     {
         await SendAsync(new()

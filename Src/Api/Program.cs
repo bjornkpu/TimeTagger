@@ -1,5 +1,6 @@
 using FastEndpoints;
 using Api;
+using Api.Database;
 using FastEndpoints.Security;
 using FastEndpoints.Swagger;
 
@@ -7,22 +8,25 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-builder.AddNpgsqlDbContext<DbCtx>("postgresdb");
+builder.AddNpgsqlDbContext<DbCtx>("events");
 
 builder.Services
     .AddAuthenticationJwtBearer(s => s.SigningKey = builder.Configuration["Auth:JwtKey"])
     .AddAuthorization()
     .AddFastEndpoints(o => o.SourceGeneratorDiscoveredTypes.AddRange(DiscoveredTypes.All))
-    .SwaggerDocument();
+    .SwaggerDocument()
+    ;
 
 var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication()
+app
+    .UseAuthentication()
     .UseAuthorization()
     .UseFastEndpoints(c => c.Errors.UseProblemDetails())
-    .UseSwaggerGen();
+    .UseSwaggerGen()
+    ;
 
 app.Run();
 
