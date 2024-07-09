@@ -56,6 +56,21 @@ public class AspireTests(TestFixture fixture, ITestOutputHelper testOutputHelper
         Assert.Equal(tag, responseBody.Tag);
     }
 
+    [Fact]
+    public async Task GetRecord_ReturnsOk()
+    {
+        // Arrange
+
+        // Act
+        var response = await _httpClient.GetAsync("/record");
+
+        // Assert
+        var responseBody = await response.Content.ReadFromJsonAsync<List<Database.Record>>();
+        Assert.NotNull(responseBody);
+        Print(responseBody);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
     private async void Print<T>(HttpResponseMessage response)
     {
         var responseBody = await response.Content.ReadFromJsonAsync<T>();

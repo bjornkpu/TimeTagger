@@ -27,7 +27,6 @@
     <ItemGroup>
       <Folder Include="Features\Record\Delete\" />
       <Folder Include="Features\Record\Get\" />
-      <Folder Include="Features\Record\List\" />
     </ItemGroup>
 
 </Project>
