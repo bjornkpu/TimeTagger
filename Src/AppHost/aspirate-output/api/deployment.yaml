@@ -30,6 +30,8 @@ spec:
         envFrom:
         - configMapRef:
             name: api-env
+        - secretRef:
+            name: api-secrets
       terminationGracePeriodSeconds: 180
       nodeSelector:
         kubernetes.io/hostname: lt0

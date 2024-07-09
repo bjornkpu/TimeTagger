@@ -19,7 +19,18 @@
   "secrets": {
     "salt": "PQ3LeP7CHs7V6PR4",
     "hash": "m7VKFfj\u002Bm3ooEFLWBwmFXZYOKexnuHebQGqZ8YkKwLU=",
-    "secrets": {}
+    "secrets": {
+      "postgresql-password": {
+        "value": "PQ3LeP7CHs7V6PR4jDZhaIaNE8rJfHMUKOvZOiY03z\u002B4kJVlWJvQXQ=="
+      },
+      "postgres": {
+        "POSTGRES_PASSWORD": "PQ3LeP7CHs7V6PR4jDZhaIaNE8rJfHMUKOvZOiY03z\u002B4kJVlWJvQXQ=="
+      },
+      "events": {},
+      "api": {
+        "ConnectionStrings__events": "PQ3LeP7CHs7V6PR4RJ9azoy73rij4BGrsbnVfgYpyiqwtYliFLf3V9j9uDv8vHikTRNs8FPxcTmRS2xz52mDvEpqLA\u002BVI4wTjYvt7zQar\u002BjkfugjcusEC/ZymTAkOboAXZcdeo3SZBtG6Ac="
+      }
+    }
   },
   "processAllComponents": true
 }

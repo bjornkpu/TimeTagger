@@ -1,6 +1,7 @@
 namespace: timetagger
 
 resources:
+- postgres
 - api
 - namespace.yaml
 - dashboard.yaml
