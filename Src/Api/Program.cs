@@ -1,31 +1,30 @@
 using FastEndpoints;
 using Api;
+using FastEndpoints.Security;
+using FastEndpoints.Swagger;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 builder.AddNpgsqlDbContext<DbCtx>("postgresdb");
 
-builder.Services.AddFastEndpoints();
+builder.Services
+    .AddAuthenticationJwtBearer(s => s.SigningKey = builder.Configuration["Auth:JwtKey"])
+    .AddAuthorization()
+    .AddFastEndpoints(o => o.SourceGeneratorDiscoveredTypes.AddRange(DiscoveredTypes.All))
+    .SwaggerDocument();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
 app.UseHttpsRedirection();
 
-app.UseFastEndpoints();
-
-app.MapGet("/", () => "Hello World! [TimeTagger]");
+app.UseAuthentication()
+    .UseAuthorization()
+    .UseFastEndpoints(c => c.Errors.UseProblemDetails())
+    .UseSwaggerGen();
 
 app.Run();
+
+// For testing purposes
+public partial class Program { }
