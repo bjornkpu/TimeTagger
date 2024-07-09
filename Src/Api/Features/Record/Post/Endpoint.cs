@@ -8,18 +8,19 @@ namespace Api.Features.Record.Post;
 [HttpPost("/record")]
 public class Endpoint : Endpoint<Request, Response, Mapper>
 {
-    public DbCtx DbCtx { get; set; }
+    public required DbCtx DbCtx { get; set; }
 
     public override async Task HandleAsync(Request req, CancellationToken ct)
     {
         var res = await DbCtx.Records.AddAsync(new Database.Record()
         {
             Id = new Guid(),
-            Timestamp = DateTime.Now,
+            Timestamp = DateTime.UtcNow,
             Tag = req.Tag
-        });
+        }, ct);
+        await DbCtx.SaveChangesAsync(ct);
 
-        await SendAsync(Map.FromEntity(res.Entity));
+        await SendAsync(Map.FromEntity(res.Entity), cancellation: ct);
     }
 
 }
@@ -36,7 +37,7 @@ public class Mapper : Mapper<Request, Response, Database.Record>
     public override Response FromEntity(Database.Record e) => new()
     {
         Id = e.Id,
-        Timestamp = e.Timestamp,
+        Timestamp = e.Timestamp.ToLocalTime(),
         Tag = e.Tag
     };
 }
