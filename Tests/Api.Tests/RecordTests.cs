@@ -1,8 +1,8 @@
-using Api.Features.Record.PostRecord;
+using Api.Features.Record.Post;
 
 namespace Api.Tests;
 
-public class ApiTests(App App) : TestBase<App>
+public class RecordTests(App App) : TestBase<App>
 {
 
     [Fact, Priority(1)]
