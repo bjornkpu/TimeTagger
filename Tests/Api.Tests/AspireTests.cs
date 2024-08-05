@@ -4,6 +4,7 @@ using Aspire.Hosting.Testing;
 using Xunit.Abstractions;
 using PostRequest = Api.Features.Record.Post.Request;
 using PostResponse = Api.Features.Record.Post.Response;
+using ListResponse = Api.Features.Record.List.Response;
 using PatchRequest = Api.Features.Record.Update.Request;
 using PatchResponse = Api.Features.Record.Update.Response;
 
@@ -60,18 +61,44 @@ public class AspireTests(TestFixture fixture, ITestOutputHelper _testOutputHelpe
     }
 
     [Fact]
-    public async Task GetRecord_ReturnsOk()
+    public async Task ListRecord_ReturnsOk()
     {
         // Arrange
+        var httpResponse = await _httpClient.PostAsJsonAsync("/record", new PostRequest());
+        var record = await httpResponse.Content.ReadFromJsonAsync<PostResponse>();
+        Assert.NotNull(record);
 
         // Act
         var response = await _httpClient.GetAsync("/record");
 
         // Assert
-        var responseBody = await response.Content.ReadFromJsonAsync<List<Database.Record>>();
+        var responseBody = await response.Content.ReadFromJsonAsync<List<ListResponse>>();
         Assert.NotNull(responseBody);
         Print(responseBody);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ListRecord_ReturnsTimestampInLocalTime()
+    {
+        // Arrange
+        var httpResponse = await _httpClient.PostAsJsonAsync("/record", new PostRequest());
+        var record = await httpResponse.Content.ReadFromJsonAsync<PostResponse>();
+        Assert.NotNull(record);
+
+        const DateTimeKind dateTimeKind = DateTimeKind.Local;
+
+        // Act
+        var response = await _httpClient.GetAsync("/record");
+
+        // Assert
+        var responseBody = await response.Content.ReadFromJsonAsync<List<ListResponse>>();
+        Assert.NotNull(responseBody);
+        Assert.True(responseBody.Count > 0);
+
+        Print(responseBody[0]);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(dateTimeKind, responseBody[0].Timestamp.Kind);
     }
 
     [Fact]
@@ -79,7 +106,7 @@ public class AspireTests(TestFixture fixture, ITestOutputHelper _testOutputHelpe
     {
         // Arrange
         var httpResponse = await _httpClient.PostAsJsonAsync("/record", new PostRequest());
-        var record = await httpResponse.Content.ReadFromJsonAsync<Database.Record>();
+        var record = await httpResponse.Content.ReadFromJsonAsync<PostResponse>();
         Assert.NotNull(record);
 
         // Act
