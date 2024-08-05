@@ -1,8 +1,11 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using Api.Features.Record.Post;
 using Aspire.Hosting.Testing;
 using Xunit.Abstractions;
+using PostRequest = Api.Features.Record.Post.Request;
+using PostResponse = Api.Features.Record.Post.Response;
+using PatchRequest = Api.Features.Record.Update.Request;
+using PatchResponse = Api.Features.Record.Update.Response;
 
 namespace Api.Tests;
 
@@ -29,10 +32,10 @@ public class AspireTests(TestFixture fixture, ITestOutputHelper _testOutputHelpe
         // Arrange
 
         // Act
-        var response = await _httpClient.PostAsJsonAsync("/record", new Request());
+        var response = await _httpClient.PostAsJsonAsync("/record", new PostRequest());
 
         // Assert
-        Print<Response>(response);
+        Print<PostResponse>(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
@@ -43,13 +46,13 @@ public class AspireTests(TestFixture fixture, ITestOutputHelper _testOutputHelpe
         const string tag = "Work";
 
         // Act
-        var response = await _httpClient.PostAsJsonAsync("/record", new Request()
+        var response = await _httpClient.PostAsJsonAsync("/record", new PostRequest()
         {
             Tag = tag
         });
 
         // Assert
-        var responseBody = await response.Content.ReadFromJsonAsync<Response>();
+        var responseBody = await response.Content.ReadFromJsonAsync<PostResponse>();
         Assert.NotNull(responseBody);
         Print(responseBody);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -75,7 +78,7 @@ public class AspireTests(TestFixture fixture, ITestOutputHelper _testOutputHelpe
     public async Task DeleteRecord_ReturnsNoContent()
     {
         // Arrange
-        var httpResponse = await _httpClient.PostAsJsonAsync("/record", new Request());
+        var httpResponse = await _httpClient.PostAsJsonAsync("/record", new PostRequest());
         var record = await httpResponse.Content.ReadFromJsonAsync<Database.Record>();
         Assert.NotNull(record);
 
@@ -88,6 +91,73 @@ public class AspireTests(TestFixture fixture, ITestOutputHelper _testOutputHelpe
         Assert.NotNull(responseBody);
         Print(responseBody);
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task UpdateRecord_WrongId_ReturnsNoContent()
+    {
+        // Arrange
+        var guid = new Guid().ToString();
+
+        // Act
+        var response = await _httpClient.PatchAsJsonAsync($"/record/{guid}", new PatchRequest());
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task UpdateRecord_Tag_ReturnsOk()
+    {
+        // Arrange
+        var httpResponse = await _httpClient.PostAsJsonAsync("/record", new PostRequest());
+        var record = await httpResponse.Content.ReadFromJsonAsync<PostResponse>();
+        Assert.NotNull(record);
+        Assert.Null(record.Tag);
+
+        const string tag = "NewTag";
+
+        // Act
+        var response = await _httpClient.PatchAsJsonAsync($"/record/{record.Id}", new PatchRequest()
+        {
+            Tag = tag
+        });
+
+        // Assert
+        var responseBody = await response.Content.ReadFromJsonAsync<PatchResponse>();
+        Assert.NotNull(responseBody);
+        Print(responseBody);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(tag, responseBody.Tag);
+    }
+
+    [Fact]
+    public async Task UpdateRecord_Timestamp_ReturnsOk()
+    {
+        // Arrange
+        var httpResponse = await _httpClient.PostAsJsonAsync("/record", new PostRequest());
+        var record = await httpResponse.Content.ReadFromJsonAsync<PostResponse>();
+        Assert.NotNull(record);
+        Print(record);
+
+        var oldTime = record.Timestamp;
+        var newTime = DateTime.UtcNow;
+
+        // Act
+        await Task.Delay(2);
+        var response = await _httpClient.PatchAsJsonAsync($"/record/{record.Id}", new PatchRequest()
+        {
+            Timestamp = newTime
+        });
+
+        // Assert
+        var responseBody = await response.Content.ReadFromJsonAsync<PatchResponse>();
+        Assert.NotNull(responseBody);
+        Print(responseBody);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotEqual(oldTime, responseBody.Timestamp);
     }
 
     private async void Print<T>(HttpResponseMessage response)
