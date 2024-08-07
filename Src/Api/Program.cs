@@ -22,6 +22,7 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app
+    .UseDefaultExceptionHandler()
     .UseAuthentication()
     .UseAuthorization()
     .UseFastEndpoints(c => c.Errors.UseProblemDetails())
